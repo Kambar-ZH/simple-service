@@ -2,6 +2,7 @@ package conf
 
 import (
 	"errors"
+	"fmt"
 	"github.com/spf13/viper"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -12,6 +13,7 @@ type Config struct {
 	GormDB *gorm.DB
 
 	Database Database
+	JWT      JWT
 }
 
 func (gc *Config) Init() (err error) {
@@ -26,7 +28,7 @@ func (gc *Config) Init() (err error) {
 }
 
 func (gc *Config) InitVars() (err error) {
-	viper.SetConfigFile("/home/kambarych/go/src/project/app.env")
+	viper.SetConfigFile("./app.env")
 
 	err = viper.ReadInConfig()
 	if err != nil {
@@ -43,12 +45,17 @@ func (gc *Config) InitVars() (err error) {
 		gc.Database.Password = viper.GetString("POSTGRES_PASSWORD")
 	}
 
+	{
+		gc.JWT.SecretKey = viper.GetString("JWT_SECRET_KEY")
+	}
+
 	return
 }
 
 func (gc *Config) InitGormDB() (err error) {
 	conn, err := gorm.Open(postgres.Open(gc.Database.DSN()), &gorm.Config{})
 	if err != nil {
+		fmt.Println(gc.Database.DSN())
 		return
 	}
 
