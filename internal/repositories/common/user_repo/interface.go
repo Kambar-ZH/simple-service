@@ -6,6 +6,6 @@ import (
 )
 
 type User interface {
-	GetBy(ctx context.Context, where models.User) (user models.User, err error)
+	GetBy(ctx context.Context, where models.User) (result models.User, err error)
 	Save(ctx context.Context, model models.User) (result models.User, err error)
 }

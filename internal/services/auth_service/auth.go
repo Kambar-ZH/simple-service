@@ -46,6 +46,7 @@ func (srv *auth) Register(ctx context.Context, request dtos.RegisterRequest) (re
 func (srv *auth) Login(ctx context.Context, request dtos.LoginRequest) (result dtos.LoginResponse, err error) {
 	user, err := srv.userRepo.GetBy(ctx, models.User{Email: request.Email})
 	if err != nil {
+		err = ErrInvalidPasswordOrEmail
 		return
 	}
 
@@ -95,9 +96,4 @@ func (srv *auth) Refresh(ctx context.Context, request dtos.RefreshRequest) (resu
 			Refresh: refresh,
 		},
 	}, nil
-}
-
-func (srv *auth) Logout(ctx context.Context) (err error) {
-	//TODO implement me
-	panic("implement me")
 }

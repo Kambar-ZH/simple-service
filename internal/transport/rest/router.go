@@ -24,7 +24,7 @@ import (
 // @BasePath /
 // @query.collection.format multi
 
-func InitRouter() {
+func InitRouter() (err error) {
 	router := gin.New()
 
 	api := router.Group("/api")
@@ -44,5 +44,5 @@ func InitRouter() {
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	router.Run("0.0.0.0:8000")
+	return router.Run("0.0.0.0:8000")
 }

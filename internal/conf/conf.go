@@ -28,7 +28,7 @@ func (gc *Config) Init() (err error) {
 }
 
 func (gc *Config) InitVars() (err error) {
-	viper.SetConfigFile("./app.env")
+	viper.SetConfigFile("/home/kambarych/go/src/project/app.env")
 
 	err = viper.ReadInConfig()
 	if err != nil {
@@ -45,6 +45,7 @@ func (gc *Config) InitVars() (err error) {
 		gc.Database.Password = viper.GetString("POSTGRES_PASSWORD")
 	}
 
+	// JWT CONFIGURATION
 	{
 		gc.JWT.SecretKey = viper.GetString("JWT_SECRET_KEY")
 	}
