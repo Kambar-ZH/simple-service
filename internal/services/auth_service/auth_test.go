@@ -8,8 +8,29 @@ import (
 	"github.com/Kambar-ZH/simple-service/internal/repositories/common/user_repo"
 	"github.com/Kambar-ZH/simple-service/pkg/tools/auth_tool"
 	"github.com/stretchr/testify/assert"
+	"sync"
 	"testing"
 )
+
+type TestTool struct {
+	init     sync.Once
+	userRepo user_repo.User
+	userSrv  Auth
+	rollback func()
+}
+
+func (t *TestTool) Init() {
+	t.init.Do(func() {
+		if err := conf.GlobalConfig.Init(); err != nil {
+			panic(err)
+		}
+		tx := conf.GlobalConfig.GormDB.Begin()
+
+		t.userRepo = user_repo.New(tx)
+		t.userSrv = New(WithUserRepo(t.userRepo))
+		t.rollback = func() { tx.Rollback() }
+	})
+}
 
 type AuthFlow struct {
 	user   models.User
@@ -25,7 +46,7 @@ var authFlow = AuthFlow{
 
 func (a *AuthFlow) register(
 	userRepo user_repo.User,
-	srv Auth,
+	userSrv Auth,
 ) func(t *testing.T) {
 	return func(t *testing.T) {
 		ctx := context.Background()
@@ -33,7 +54,7 @@ func (a *AuthFlow) register(
 			Email:    a.user.Email,
 			Password: auth_tool.Password(a.user.Password),
 		}
-		_, err := srv.Register(ctx, request)
+		_, err := userSrv.Register(ctx, request)
 		if err != nil {
 			t.Error(err)
 		}
@@ -49,26 +70,21 @@ func (a *AuthFlow) register(
 }
 
 func TestAuth_Register(t *testing.T) {
-	if err := conf.GlobalConfig.Init(); err != nil {
-		panic(err)
-	}
-	tx := conf.GlobalConfig.GormDB.Begin()
-	defer tx.Rollback()
-
-	userRepo := user_repo.New(tx)
-	srv := New(WithUserRepo(userRepo))
+	var testTool TestTool
+	testTool.Init()
+	defer testTool.rollback()
 
 	t.Run("register user", func(t *testing.T) {
-		authFlow.register(userRepo, srv)(t)
+		authFlow.register(testTool.userRepo, testTool.userSrv)(t)
 	})
 }
 
 func (a *AuthFlow) login(
-	srv Auth,
+	userSrv Auth,
 ) func(t *testing.T) {
 	return func(t *testing.T) {
 		ctx := context.Background()
-		response, err := srv.Login(ctx, dtos.LoginRequest{
+		response, err := userSrv.Login(ctx, dtos.LoginRequest{
 			Email:    a.user.Email,
 			Password: auth_tool.Password(a.user.Password),
 		})
@@ -82,27 +98,22 @@ func (a *AuthFlow) login(
 }
 
 func TestAuth_Login(t *testing.T) {
-	if err := conf.GlobalConfig.Init(); err != nil {
-		panic(err)
-	}
-	tx := conf.GlobalConfig.GormDB.Begin()
-	defer tx.Rollback()
-
-	userRepo := user_repo.New(tx)
-	srv := New(WithUserRepo(userRepo))
+	var testTool TestTool
+	testTool.Init()
+	defer testTool.rollback()
 
 	t.Run("login user", func(t *testing.T) {
-		authFlow.register(userRepo, srv)(t)
-		authFlow.login(srv)(t)
+		authFlow.register(testTool.userRepo, testTool.userSrv)(t)
+		authFlow.login(testTool.userSrv)(t)
 	})
 }
 
 func (a *AuthFlow) refresh(
-	srv Auth,
+	userSrv Auth,
 ) func(t *testing.T) {
 	return func(t *testing.T) {
 		ctx := context.Background()
-		response, err := srv.Refresh(ctx, dtos.RefreshRequest{
+		response, err := userSrv.Refresh(ctx, dtos.RefreshRequest{
 			Refresh: a.tokens.Refresh,
 		})
 		if err != nil {
@@ -114,18 +125,13 @@ func (a *AuthFlow) refresh(
 }
 
 func TestAuth_Refresh(t *testing.T) {
-	if err := conf.GlobalConfig.Init(); err != nil {
-		panic(err)
-	}
-	tx := conf.GlobalConfig.GormDB.Begin()
-	defer tx.Rollback()
-
-	userRepo := user_repo.New(tx)
-	srv := New(WithUserRepo(userRepo))
+	var testTool TestTool
+	testTool.Init()
+	defer testTool.rollback()
 
 	t.Run("refresh user token", func(t *testing.T) {
-		authFlow.register(userRepo, srv)(t)
-		authFlow.login(srv)(t)
-		authFlow.refresh(srv)(t)
+		authFlow.register(testTool.userRepo, testTool.userSrv)(t)
+		authFlow.login(testTool.userSrv)(t)
+		authFlow.refresh(testTool.userSrv)(t)
 	})
 }
