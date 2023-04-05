@@ -6,7 +6,7 @@ import (
 	"sync"
 )
 
-var services = &Services{}
+var ServiceManager = &Services{}
 
 type Services struct {
 	authServiceInit sync.Once

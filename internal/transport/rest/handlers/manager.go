@@ -1,6 +1,7 @@
-package managers
+package handlers
 
 import (
+	"github.com/Kambar-ZH/simple-service/internal/managers"
 	"github.com/Kambar-ZH/simple-service/internal/transport/rest/handlers/auth_handler"
 	"github.com/Kambar-ZH/simple-service/internal/transport/rest/handlers/user_handler"
 	"sync"
@@ -19,7 +20,7 @@ type Handlers struct {
 func (h *Handlers) Auth() *auth_handler.Auth {
 	h.authHandlerInit.Do(func() {
 		h.authHandler = auth_handler.New(
-			auth_handler.WithAuthService(services.Auth()),
+			auth_handler.WithAuthService(managers.ServiceManager.Auth()),
 		)
 	})
 	return h.authHandler
@@ -28,7 +29,7 @@ func (h *Handlers) Auth() *auth_handler.Auth {
 func (h *Handlers) User() *user_handler.User {
 	h.userHandlerInit.Do(func() {
 		h.userHandler = user_handler.New(
-			user_handler.WithUserService(services.User()),
+			user_handler.WithUserService(managers.ServiceManager.User()),
 		)
 	})
 	return h.userHandler

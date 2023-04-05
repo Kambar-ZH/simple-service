@@ -2,7 +2,7 @@ package rest
 
 import (
 	_ "github.com/Kambar-ZH/simple-service/docs"
-	"github.com/Kambar-ZH/simple-service/internal/managers"
+	"github.com/Kambar-ZH/simple-service/internal/transport/rest/handlers"
 	"github.com/Kambar-ZH/simple-service/internal/transport/rest/middlewares"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -33,14 +33,14 @@ func InitRouter() {
 
 	auth := v1.Group("/auth")
 	{
-		auth.POST("/login", managers.API.Auth().Login)
-		auth.POST("/register", managers.API.Auth().Register)
-		auth.POST("/refresh", managers.API.Auth().Refresh)
+		auth.POST("/login", handlers.API.Auth().Login)
+		auth.POST("/register", handlers.API.Auth().Register)
+		auth.POST("/refresh", handlers.API.Auth().Refresh)
 	}
 
 	user := v1.Group("/user")
 	{
-		user.GET("/profile", middlewares.Authenticated(), managers.API.User().Profile)
+		user.GET("/profile", middlewares.Authenticated(), handlers.API.User().Profile)
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
