@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/Kambar-ZH/simple-service/pkg/core"
+	"github.com/Kambar-ZH/simple-service/internal/core"
 )
 
 func main() {
