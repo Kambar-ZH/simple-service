@@ -6,11 +6,13 @@ import (
 	"github.com/Kambar-ZH/simple-service/internal/dtos"
 	"github.com/Kambar-ZH/simple-service/internal/models"
 	"github.com/Kambar-ZH/simple-service/internal/repositories/common/user_repo"
+	"github.com/Kambar-ZH/simple-service/pkg/logger"
 	"github.com/Kambar-ZH/simple-service/pkg/tools/auth_tool"
 )
 
 type auth struct {
 	userRepo user_repo.User
+	lgr      logger.Logger
 }
 
 func New(options ...Option) Auth {
@@ -25,6 +27,11 @@ var ErrInvalidPasswordOrEmail = errors.New("invalid password or email")
 var ErrTokenIsInvalid = errors.New("token is invalid")
 
 func (srv *auth) Register(ctx context.Context, request dtos.RegisterRequest) (result dtos.RegisterResponse, err error) {
+	defer func() {
+		if err != nil {
+			srv.lgr.Error(err.Error(), logger.Any("request", request))
+		}
+	}()
 	hashedPassword, err := request.Password.Hash()
 	if err != nil {
 		return
@@ -44,6 +51,11 @@ func (srv *auth) Register(ctx context.Context, request dtos.RegisterRequest) (re
 }
 
 func (srv *auth) Login(ctx context.Context, request dtos.LoginRequest) (result dtos.LoginResponse, err error) {
+	defer func() {
+		if err != nil {
+			srv.lgr.Error(err.Error(), logger.Any("request", request))
+		}
+	}()
 	user, err := srv.userRepo.GetBy(ctx, models.User{Email: request.Email})
 	if err != nil {
 		err = ErrInvalidPasswordOrEmail
@@ -69,6 +81,11 @@ func (srv *auth) Login(ctx context.Context, request dtos.LoginRequest) (result d
 }
 
 func (srv *auth) Refresh(ctx context.Context, request dtos.RefreshRequest) (result dtos.RefreshResponse, err error) {
+	defer func() {
+		if err != nil {
+			srv.lgr.Error(err.Error(), logger.Any("request", request))
+		}
+	}()
 	token, err := auth_tool.ParseToken(request.Refresh)
 	if err != nil {
 		return

@@ -4,10 +4,12 @@ import (
 	"context"
 	"github.com/Kambar-ZH/simple-service/internal/models"
 	"github.com/Kambar-ZH/simple-service/internal/repositories/common/user_repo"
+	"github.com/Kambar-ZH/simple-service/pkg/logger"
 )
 
 type user struct {
 	userRepo user_repo.User
+	lgr      logger.Logger
 }
 
 func New(options ...Option) User {

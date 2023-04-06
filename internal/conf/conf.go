@@ -2,7 +2,7 @@ package conf
 
 import (
 	"errors"
-	"fmt"
+	"github.com/Kambar-ZH/simple-service/pkg/logger"
 	"github.com/spf13/viper"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -14,9 +14,11 @@ type Config struct {
 
 	Database Database
 	JWT      JWT
+	Lgr      logger.Logger
 }
 
 func (gc *Config) Init() (err error) {
+	gc.InitLogger()
 	if err = gc.InitVars(); err != nil {
 		panic(err)
 	}
@@ -28,7 +30,7 @@ func (gc *Config) Init() (err error) {
 }
 
 func (gc *Config) InitVars() (err error) {
-	viper.SetConfigFile("/home/kambarych/go/src/project/app.env")
+	viper.SetConfigFile("app.env")
 
 	err = viper.ReadInConfig()
 	if err != nil {
@@ -56,7 +58,6 @@ func (gc *Config) InitVars() (err error) {
 func (gc *Config) InitGormDB() (err error) {
 	conn, err := gorm.Open(postgres.Open(gc.Database.DSN()), &gorm.Config{})
 	if err != nil {
-		fmt.Println(gc.Database.DSN())
 		return
 	}
 
@@ -74,4 +75,36 @@ func (gc *Config) InitGormDB() (err error) {
 
 	gc.GormDB = conn
 	return
+}
+
+func (gc *Config) InitLogger() {
+	var tops = []logger.TeeOption{
+		{
+			Filename: "logs/access.log",
+			Ropt: logger.RotateOptions{
+				MaxSize:    1,
+				MaxAge:     1,
+				MaxBackups: 3,
+				Compress:   true,
+			},
+			Lef: func(lvl logger.Level) bool {
+				return lvl <= logger.InfoLevel
+			},
+		},
+		{
+			Filename: "logs/error.log",
+			Ropt: logger.RotateOptions{
+				MaxSize:    1,
+				MaxAge:     1,
+				MaxBackups: 3,
+				Compress:   true,
+			},
+			Lef: func(lvl logger.Level) bool {
+				return lvl > logger.InfoLevel
+			},
+		},
+	}
+
+	lgr := logger.NewTeeWithRotate(tops)
+	gc.Lgr = lgr
 }

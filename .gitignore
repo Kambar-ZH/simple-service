@@ -2,3 +2,4 @@
 /vendor
 /docs
 app.env
+/logs

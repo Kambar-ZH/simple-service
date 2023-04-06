@@ -27,7 +27,10 @@ func (t *TestTool) Init() {
 		tx := conf.GlobalConfig.GormDB.Begin()
 
 		t.userRepo = user_repo.New(tx)
-		t.userSrv = New(WithUserRepo(t.userRepo))
+		t.userSrv = New(
+			WithUserRepo(t.userRepo),
+			WithLogger(conf.GlobalConfig.Lgr),
+		)
 		t.rollback = func() { tx.Rollback() }
 	})
 }
