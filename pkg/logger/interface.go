@@ -1,5 +1,7 @@
 package logger
 
+import "context"
+
 type Logger interface {
 	Debug(msg string, fields ...Field)
 	Info(msg string, fields ...Field)
@@ -7,4 +9,5 @@ type Logger interface {
 	Error(msg string, fields ...Field)
 	Panic(msg string, fields ...Field)
 	Fatal(msg string, fields ...Field)
+	WithCtx(ctx context.Context) Logger
 }

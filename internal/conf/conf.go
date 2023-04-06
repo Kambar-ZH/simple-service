@@ -14,6 +14,7 @@ type Config struct {
 
 	Database Database
 	JWT      JWT
+	App      App
 	Lgr      logger.Logger
 }
 
@@ -50,6 +51,11 @@ func (gc *Config) InitVars() (err error) {
 	// JWT CONFIGURATION
 	{
 		gc.JWT.SecretKey = viper.GetString("JWT_SECRET_KEY")
+	}
+
+	// APP CONFIGURATION
+	{
+		gc.App.Name = viper.GetString("APP_NAME")
 	}
 
 	return

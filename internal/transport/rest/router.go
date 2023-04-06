@@ -29,7 +29,7 @@ func InitRouter() (err error) {
 
 	api := router.Group("/api")
 
-	v1 := api.Group("/v1")
+	v1 := api.Group("/v1", middlewares.SetContextMetadata())
 
 	auth := v1.Group("/auth")
 	{

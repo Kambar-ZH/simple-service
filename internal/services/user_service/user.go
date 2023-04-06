@@ -20,6 +20,11 @@ func New(options ...Option) User {
 	return srv
 }
 
-func (u user) GetBy(ctx context.Context, where models.User) (result models.User, err error) {
-	return u.userRepo.GetBy(ctx, where)
+func (srv *user) GetBy(ctx context.Context, where models.User) (result models.User, err error) {
+	defer func() {
+		if err != nil {
+			srv.lgr.WithCtx(ctx).Error(err.Error(), logger.Any("request", where))
+		}
+	}()
+	return srv.userRepo.GetBy(ctx, where)
 }

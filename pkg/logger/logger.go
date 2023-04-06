@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"context"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -20,37 +21,67 @@ const (
 	// FatalLevel logs a message, then calls os.Exit(1).
 	FatalLevel Level = zap.FatalLevel // 5
 	DebugLevel Level = zap.DebugLevel // -1
+
+	RequestIDKey string = "request_id"
+	AppKey       string = "app"
 )
 
 type logger struct {
+	ctx   context.Context
 	l     *zap.Logger // zap ensure that zap.Logger is safe for concurrent use
 	level Level
 }
 
 type Field = zap.Field
 
+func (l *logger) lgrFields(fields ...Field) (lgrFields []Field) {
+
+	if l.ctx != nil {
+		requestID := l.ctx.Value(RequestIDKey).(string)
+		lgrFields = append(lgrFields, String(RequestIDKey, requestID))
+
+		app := l.ctx.Value(AppKey).(string)
+		lgrFields = append(lgrFields, String(AppKey, app))
+	}
+
+	lgrFields = append(lgrFields, fields...)
+
+	return
+}
+
 func (l *logger) Debug(msg string, fields ...Field) {
-	l.l.Debug(msg, fields...)
+	lgrFields := l.lgrFields(fields...)
+	l.l.Debug(msg, lgrFields...)
 }
 
 func (l *logger) Info(msg string, fields ...Field) {
-	l.l.Info(msg, fields...)
+	lgrFields := l.lgrFields(fields...)
+	l.l.Info(msg, lgrFields...)
 }
 
 func (l *logger) Warn(msg string, fields ...Field) {
-	l.l.Warn(msg, fields...)
+	lgrFields := l.lgrFields(fields...)
+	l.l.Warn(msg, lgrFields...)
 }
 
 func (l *logger) Error(msg string, fields ...Field) {
-	l.l.Error(msg, fields...)
+	lgrFields := l.lgrFields(fields...)
+	l.l.Error(msg, lgrFields...)
 }
 
 func (l *logger) Panic(msg string, fields ...Field) {
-	l.l.Panic(msg, fields...)
+	lgrFields := l.lgrFields(fields...)
+	l.l.Panic(msg, lgrFields...)
 }
 
 func (l *logger) Fatal(msg string, fields ...Field) {
-	l.l.Fatal(msg, fields...)
+	lgrFields := l.lgrFields(fields...)
+	l.l.Fatal(msg, lgrFields...)
+}
+
+func (l *logger) WithCtx(ctx context.Context) Logger {
+	l.ctx = ctx
+	return l
 }
 
 var (
@@ -88,7 +119,7 @@ func NewTeeWithRotate(tops []TeeOption, opts ...Option) Logger {
 	var cores []zapcore.Core
 	cfg := zap.NewProductionConfig()
 	cfg.EncoderConfig.EncodeTime = func(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
-		enc.AppendString(t.Format("2006-01-02T15:04:05.000Z0700"))
+		enc.AppendString(t.Format("2006-01-02T15:04:05"))
 	}
 
 	for _, top := range tops {
