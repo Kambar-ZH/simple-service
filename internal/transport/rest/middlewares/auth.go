@@ -19,6 +19,5 @@ func Authenticated() gin.HandlerFunc {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 		}
 		auth_tool.SetAccessToken(ctx, token)
-		ctx.Next()
 	}
 }

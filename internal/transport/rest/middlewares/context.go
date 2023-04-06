@@ -11,6 +11,5 @@ func SetContextMetadata() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		ctx.Set(logger.RequestIDKey, uuid_tool.GetRandomRequestID())
 		ctx.Set(logger.AppKey, conf.GlobalConfig.App.Name)
-		ctx.Next()
 	}
 }
