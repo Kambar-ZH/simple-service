@@ -1,10 +1,11 @@
 package user_handler
 
 import (
+	"net/http"
+
 	"github.com/Kambar-ZH/simple-service/internal/services/user_service"
 	"github.com/Kambar-ZH/simple-service/pkg/tools/auth_tool"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type User struct {

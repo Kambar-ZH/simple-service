@@ -3,11 +3,12 @@ package user_repo
 import (
 	"context"
 	"errors"
+	"testing"
+
 	"github.com/Kambar-ZH/simple-service/internal/conf"
 	"github.com/Kambar-ZH/simple-service/internal/models"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
-	"testing"
 )
 
 func TestUser_Save(t *testing.T) {

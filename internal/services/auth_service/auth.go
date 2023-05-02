@@ -3,6 +3,7 @@ package auth_service
 import (
 	"context"
 	"errors"
+
 	"github.com/Kambar-ZH/simple-service/internal/dtos"
 	"github.com/Kambar-ZH/simple-service/internal/models"
 	"github.com/Kambar-ZH/simple-service/internal/repositories/common/user_repo"
@@ -23,8 +24,10 @@ func New(options ...Option) Auth {
 	return srv
 }
 
-var ErrInvalidPasswordOrEmail = errors.New("invalid password or email")
-var ErrTokenIsInvalid = errors.New("token is invalid")
+var (
+	ErrInvalidPasswordOrEmail = errors.New("invalid password or email")
+	ErrTokenIsInvalid         = errors.New("token is invalid")
+)
 
 func (srv *auth) Register(ctx context.Context, request dtos.RegisterRequest) (result dtos.RegisterResponse, err error) {
 	defer func() {

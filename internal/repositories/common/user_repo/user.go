@@ -2,6 +2,7 @@ package user_repo
 
 import (
 	"context"
+
 	"github.com/Kambar-ZH/simple-service/internal/models"
 	"gorm.io/gorm"
 )
@@ -15,7 +16,6 @@ func New(db *gorm.DB) User {
 }
 
 func (u user) GetBy(ctx context.Context, where models.User) (user models.User, err error) {
-
 	err = u.db.
 		Table(models.User{}.TableName()).
 		Where(where).
@@ -30,7 +30,6 @@ func (u user) GetBy(ctx context.Context, where models.User) (user models.User, e
 }
 
 func (u user) Save(ctx context.Context, model models.User) (result models.User, err error) {
-
 	err = u.db.Table(models.User{}.TableName()).
 		Save(&model).
 		Error

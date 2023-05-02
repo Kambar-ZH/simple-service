@@ -2,12 +2,13 @@ package logger
 
 import (
 	"context"
+	"os"
+	"time"
+
 	"github.com/Kambar-ZH/simple-service/pkg/tools/tracing_tools"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
-	"os"
-	"time"
 )
 
 type Level = zapcore.Level
@@ -34,7 +35,6 @@ type logger struct {
 type Field = zap.Field
 
 func (l *logger) withCtxFields(ctx context.Context) (fields []Field) {
-
 	tracingMetadata, ok := ctx.Value(TracingMetadataKey).(tracing_tools.TracingMetadata)
 	if ok {
 		fields = append(fields, Any(TracingMetadataKey, tracingMetadata))

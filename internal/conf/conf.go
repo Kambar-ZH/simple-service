@@ -2,11 +2,12 @@ package conf
 
 import (
 	"errors"
+	"time"
+
 	"github.com/Kambar-ZH/simple-service/pkg/logger"
 	"github.com/spf13/viper"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"time"
 )
 
 type Config struct {
@@ -84,7 +85,7 @@ func (gc *Config) InitGormDB() (err error) {
 }
 
 func (gc *Config) InitLogger() {
-	var tops = []logger.TeeOption{
+	tops := []logger.TeeOption{
 		{
 			Filename: "logs/access.log",
 			Ropt: logger.RotateOptions{

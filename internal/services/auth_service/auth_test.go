@@ -2,14 +2,15 @@ package auth_service
 
 import (
 	"context"
+	"sync"
+	"testing"
+
 	"github.com/Kambar-ZH/simple-service/internal/conf"
 	"github.com/Kambar-ZH/simple-service/internal/dtos"
 	"github.com/Kambar-ZH/simple-service/internal/models"
 	"github.com/Kambar-ZH/simple-service/internal/repositories/common/user_repo"
 	"github.com/Kambar-ZH/simple-service/pkg/tools/auth_tool"
 	"github.com/stretchr/testify/assert"
-	"sync"
-	"testing"
 )
 
 type TestTool struct {

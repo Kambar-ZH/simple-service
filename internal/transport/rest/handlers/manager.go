@@ -1,10 +1,11 @@
 package handlers
 
 import (
+	"sync"
+
 	"github.com/Kambar-ZH/simple-service/internal/managers"
 	"github.com/Kambar-ZH/simple-service/internal/transport/rest/handlers/auth_handler"
 	"github.com/Kambar-ZH/simple-service/internal/transport/rest/handlers/user_handler"
-	"sync"
 )
 
 var API = &Handlers{}

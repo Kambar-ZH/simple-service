@@ -2,10 +2,11 @@ package auth_tool
 
 import (
 	"errors"
+	"time"
+
 	"github.com/Kambar-ZH/simple-service/internal/conf"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
-	"time"
 )
 
 const AccessTokenKey = "access_token"
