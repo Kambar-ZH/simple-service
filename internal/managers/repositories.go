@@ -1,9 +1,10 @@
 package managers
 
 import (
+	"sync"
+
 	"github.com/Kambar-ZH/simple-service/internal/conf"
 	"github.com/Kambar-ZH/simple-service/internal/repositories/common/user_repo"
-	"sync"
 )
 
 var repositories = &Repositories{}

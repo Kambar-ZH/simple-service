@@ -1,10 +1,11 @@
 package auth_handler
 
 import (
+	"net/http"
+
 	"github.com/Kambar-ZH/simple-service/internal/dtos"
 	"github.com/Kambar-ZH/simple-service/internal/services/auth_service"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type Auth struct {
@@ -31,9 +32,7 @@ func New(options ...Option) *Auth {
 // @Failure      500 {object}  string
 // @Router       /api/v1/auth/register [post]
 func (ctl *Auth) Register(ctx *gin.Context) {
-	var (
-		payload dtos.RegisterRequest
-	)
+	var payload dtos.RegisterRequest
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
@@ -59,9 +58,7 @@ func (ctl *Auth) Register(ctx *gin.Context) {
 // @Failure      500 {object}  string
 // @Router       /api/v1/auth/login [post]
 func (ctl *Auth) Login(ctx *gin.Context) {
-	var (
-		payload dtos.LoginRequest
-	)
+	var payload dtos.LoginRequest
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
@@ -87,9 +84,7 @@ func (ctl *Auth) Login(ctx *gin.Context) {
 // @Failure      500 {object}  string
 // @Router       /api/v1/auth/refresh [post]
 func (ctl *Auth) Refresh(ctx *gin.Context) {
-	var (
-		payload dtos.RefreshRequest
-	)
+	var payload dtos.RefreshRequest
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return

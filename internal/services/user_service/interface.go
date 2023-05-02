@@ -2,6 +2,7 @@ package user_service
 
 import (
 	"context"
+
 	"github.com/Kambar-ZH/simple-service/internal/models"
 )
 

@@ -1,10 +1,11 @@
 package managers
 
 import (
+	"sync"
+
 	"github.com/Kambar-ZH/simple-service/internal/conf"
 	"github.com/Kambar-ZH/simple-service/internal/services/auth_service"
 	"github.com/Kambar-ZH/simple-service/internal/services/user_service"
-	"sync"
 )
 
 var ServiceManager = &Services{}

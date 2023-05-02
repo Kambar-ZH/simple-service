@@ -2,9 +2,10 @@ package middlewares
 
 import (
 	"errors"
+	"net/http"
+
 	"github.com/Kambar-ZH/simple-service/pkg/tools/auth_tool"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 var ErrUnauthorized = errors.New("unauthorized request")

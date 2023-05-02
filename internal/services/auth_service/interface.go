@@ -2,6 +2,7 @@ package auth_service
 
 import (
 	"context"
+
 	"github.com/Kambar-ZH/simple-service/internal/dtos"
 )
 
